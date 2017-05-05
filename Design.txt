@@ -1,0 +1,433 @@
+Suyi Liu
+sliu92@jhu.edu
+Final Project Design
+
+to make file:
+make gives three executable: final, test1, and test2
+final runs part2 the repository,
+the driver for it is main.cpp
+
+test1 is my small test program which simply inserts 1-1000 into structure
+and then deletes 1-1000 one by one
+the driver for it is test.cpp
+
+test2 uses random operator that takes user's input to generate operations
+the driver for it is driver.cpp
+
+
+Project Overview:
+
+The project is separated into two parts: first part contains a template,
+implementing a several level linked nodes structure that can store a set of
+data of a certain type with associated keys and can perform opertions on it.
+
+Data Structures:
+
+In the template, a node contains an array of 5 keys, an array of 5 values 
+associated, and an array of next pointers pointing to nodes in the next level,
+it also has an integer value of how many elements it contains.
+The structure looks like a tree. It has insertion, deletion, get, and print 
+methods that operate on the tree.
+Each node has maximum storage of five combinations of keys and values, as 
+long as it reaches 5 residents, It hashes all of keys in itself to the 
+sublevel and directs a new node down to the next level to take up space.
+
+Part One:
+
+
+Class descriptions:
+
+Hashnode class:
+It contains 3 private arrays of keys, values, and next pointers to sub level 
+nodes.
+It has a Hashnode type pointer pointing to its parent.
+It also has an int representing how many objects it has and an int representing 
+its level number.(eg, level = 0 for the root node.)
+It has function of getnumobject together with its constructor and destructor.
+When destroying it, I clear all its dynamic memory by deleting every object
+pointers and next pointers.
+
+Structure class:
+It contains a Hashnode called root and an integer representing max number of 
+levels of the deepest node. It contains a counter as well as a numnodes 
+representing how many hashnodes are in the repository.
+It has MLH_insert method, MLH_get method, MLH_delete method, and << method 
+that prints 1.number of objects 2. number of deepest levels 3. number of hash
+nodes 4.(optional) all the keys and their associated objects.
+So it has an int representation of print option. If it is 0, it prints all the 
+keys and associative objects, if it is set to 1, it doesn not print everything
+in the list.
+
+==============Method specifications:
+
+In Hashnode class: 
+getsnumobjec() simply returns how many objects are associated with the node.
+Meaning total amount of objects stored underneath it.
+It is an important message because if numobject<=5, it does not gave any child,
+which is pretty useful when performing recursion.
+
+In Structure class:
+MLH_insert inserts a key and its associated object into the repository. If the
+node is not full, it inserts the key into the first empty slot, if the node is full,
+it keeps searching the node's right child----which is the hased indexed child.
+If the node's object is exactly five, indicating just no space for the node,
+it hashes the node's all objects and make new children nodes of it. Whenever a
+node is inserted, it increases all its parent node number of objects by 1.
+Everytime a new node is created, I increase the number of total nodes in the 
+repository.
+
+MLH_delete deletes the wanted key and its associateve data. What I did for delete
+method was to first traverse through the tree by recursion: If the node I'm 
+currently at is a leaf, meaning no children, I search its array of keys one
+by one. If a key of wanted number exists, I return this node. If I cannot
+find any key with the wanted value, it means the repository does not contain
+the wanted number, I delete it. 
+If the node I'm currently looking is a parent----has more than five objects,
+I try to find its most potential children by finding the node's hashed index.
+If the wanted child exists, I continue looking at this child. If the wanted 
+child does not exist, there is no hope to mind my key in the repository, so
+I cannot delete anything from it.
+
+Once the leaf node is found, the first thing I did was to find the index of key
+and delete is. In the same time, I delete its associated value pointer of the
+same index. After that, I start to go up, everytime I arrive at a node, I 
+decrease its number of objects by one. If after decreasing, the node has no
+object and key stored, I delete it by marking its index from its parent, which
+helps me to locate its parent's next pointer even if it is freed. There is 
+another case in which there are exactly 5 elements in a node after deletion,
+this means the node can be made as a leaf. So I collapse it. Since all of its
+children can only be one level below it, I simply search for all the keys and
+values stored in all of its children nodes(if they exist), and insert them into
+the node's storage.
+
+In the end, I make the node to change to its parent, ready to go up. And then 
+I carefully delete the node that was marked to be deleted in the end.
+
+
+<< prints numobjects, current highest levels, number of hash nodes, and maybe
+all keys and their associated objects.
+
+MLH_get: get function is very similar to the first part in my delete function.
+I first look at a root(using recuersion), If the root is a leaf, it is easy 
+to decide if the key exists in the repository just by traversing through all
+its indices. If it is not, I use recursion. I hash the node to the place it
+should be if it exists. Then I try to make the indexed child to be the new 
+root. If the children has not been creared yet, I return null, otherwise I
+keep doing same searching based on this child.
+
+<< is an operator overloading. It prints the current deepest level of nodes
+in the repository and number of hashnodes. In order to find the current 
+deepest level of nodes, I still performed recursion. I locate at a root,
+and compares all of its childrens' numobjects, because the child with the
+largest numobjects must not contain less amount of layers as who reaches
+five, first, who expands. As for current number of objects, I simply look
+at the root's number of objects, because it represents the sum of all of
+its children nodes.
+If I have to print all the keys in the repository, I traverse through the
+structure from the root. If the root is a leaf, I print all keys and values
+associated with it. If the root still has children, I make all its children
+to be the new roots.
+
+MLH_set_print_function sets the parameter stored in the structure class,
+to decide when to print all keys and values and when not.
+
+In driver class:
+I randomize for number of operations times that the user specifies, and
+for each random index(q), I allocate space for it and give it a pointer,
+then I insert random key into the structure/ delete the hashnode with
+key id/ get the node with id.
+In the end I print the structure and make a summary of how many inserts,
+deletes, gets and the counter respectively.
+
+In test class:
+The test class inserts nodes from 1 to 1000, the deletes them one by one
+to check if I have the right performance for insert and delete.
+=============================================
+
+Analysis:
+This data structure is much more efficient than the previous data structures
+we inplementd, but take a lot more space than previous ones.
+In order to get a specific key, MLhash takes 8 steps as a maximum, which is
+a lot more faster than previous ones whose run time largely depends on the
+size of nodes in the repository.
+
+As we can see from the data below, number of objects is almost the half of
+the range, since each key has 1/4 chance to be deleted and 1/4 chance to
+be added.
+
+The counter is almost 5*number of operations, so we can see each single 
+operation takes about the effort of 5-10 steps.
+This is because the maximum number of inspection is 8. Any node can be 
+stored within 8 levels.
+
+For insertion:
+There are 1/2 chance the node is not there, and each insert traverses back
+to top, so 1/2 * ( 4 + 4 ) (levels on average
+decide the node is not there)
+There are 1/2 chance the node is there, so 1/2 * 4 (levels on average of
+the last inspection)
+So 4 + 2 = 6 steps of each insert. 
+
+For deletion:
+There are 1/2 chance the node is not there, so 1/2 * 4 (levels on average
+for the getnode function to decide)
+There are 1/2 chance the node is there, and each delete traverses back to
+top, so 1/2 * ( 4 + 4 ) steps in this case
+So 2+4 = 6 steps of each delete.
+
+For getting:
+It always takes about 4 levels to inspect on average to decide if the key
+looking for exists.
+So 4 steps per get.
+
+As a result, each single operation takes 1/4 * 6 + 1/4 * 6 + 1/2 * 4 = 5
+steps, which matches the average of 1000000 operations: 5408312 steps for
+example.
+
+The hashnode is the most efficient among all of previous structures because
+it takes 8 steps at most to find an object.
+
+Keys in range 1-100, 1000 operations:
+seed 1:    5262 steps  objects:44
+seed 2:    5525 steps  objects:56
+seed 3:    5740 steps  objects:50
+seed 4:    5443 steps  objects:45
+seed 5:    5898 steps  objects:55
+average:   5573 steps  objects:51
+
+Keys in range 1-100, 1000000 operatopns:
+seed 1:    5404484 steps  objects:56
+seed 2:    5412593 steps  objects:51
+seed 3:    5408439 steps  objects:51
+seed 4:    5406629 steps  objects:51
+seed 5:    5409418 steps  objects:41
+average:   5408312 steps  objects:52
+
+Keys in range 1-10000, 1000000 operations
+seed 1:    5224982 steps  objects:5003
+seed 2:    5220052 steps  objects:4944
+seed 3:    5222787 steps  objects:4935
+seed 4:    5222506 steps  objects:5047
+seed 5:    5231890 steps  objects:4955
+seed 6:    5227556 steps  objects:4957
+seed 7:    5224887 steps  objects:4962
+seed 8:    5216610 steps  objects:5091
+seed 9:    5228616 steps  objects:5018
+seed 10:   5219346 steps  objects:5103
+average:   5223923 steps  objects:5002
+
+Keys in range 1-100000, 10000000 operations
+seed 1:    58080172 steps  objects:49899
+seed 2:    58100682 steps  objects:49790
+seed 3:    58052806 steps  objects:49991
+seed 4:    58061786 steps  objects:49897
+seed 5:    58091854 steps  objects:50036
+seed 6:    58068949 steps  objects:49698
+seed 7:    58038939 steps  objects:50035
+seed 8:    58079205 steps  objects:49815
+seed 9:    58068912 steps  objects:49912
+seed 10:   58055333 steps  objects:49896
+average:   58069864 steps  objects:49897
+
+
+Comment:
+I tried to run my Structure.h by implementing a small program called test.cpp
+and it works fine, but when I tried to run it on the driver program(driver.cpp),
+I kept facing segmentation faults. I observed that even though my structure
+may not be problematic(all the number of objects stored and collapsing)for 
+1400 operations worked well, But When I put larger numbers, it kept reporting
+segmentation fault or abort. I muted all the delete methods, it performs well
+with inserts and gets only, even if with large number of operations. But as
+long as I add deletion, it starts to have segmentation fault:
+0x00007ffff7270519 in _int_malloc () from /lib64/libc.so.6
+Problem fixed:
+I used values[i] = NULL instead of delete values[i] so that
+double deletion is avoided!
+
+-------------------------------------------------------------------------------
+
+Part two:
+
+
+Overview and class descriptions:
+In part two , I wrote Vehicle.h Vehicle.cpp Car.h Car.cpp Hybrid.h Hybrid.cpp 
+Motor.h Motor.cpp Bus.h Bus.cpp List.h List.cpp main.cpp.
+
+Vehicle is the basic type that has properties of unique id indicated by the 
+user, its model year integer representation, its mileage integer, its color 
+string representation, it also contains a list of task nodes performing 
+services. Vehicle has functions of all the getting and setting methods, print
+functions, printbill function that prints all of its tasks and associated 
+bill charges. In the same time, it also has a overloaded operator << that prints
+all of its information. Most importantly, it has an add function that takes 
+inputs of a taskname, part cost, labor cost and puts the newly created task
+into the list of tasks that the vehicle has.
+
+Car is the advanced vehicle that has all of the abilities of the vehicle.
+Not only does it have id, color, mileage and model year, it also has engine
+size in int, motor usage in int and battery capacity. It has all of the 
+functions of Vehicle and in addition, has get engine, get usage, get battery
+capacity.
+
+Hybrid is the advanced car, not only it has all the properties of the Vehicle
+, but also it has all the functions and properties of Car.
+
+Motor is another vehicle that has all properties of Vehicle. It has engine size
+front wheel size and back wheel size and their associative getting methods
+as additions. I didn't write further setting functions since all the properties
+are assumed to be unchanged.
+
+Bus is also another vehicle that has all Vihecle properties plus a passenger
+capacity. It also has all functions that the vehicles have.
+
+Main is basically a menu, asking user to choose their specific operations.
+I divide all possible operations into three parts:
+1. add a vehicle
+2. add tasks to specific vehicle 
+3. check out vehicle(s) or view all vehicles' status
+
+==========Method specifications:
+
+In main.cpp:
+
+The menu is a while loop which stops only when user chooses bye in the main
+page. 
+
+Inside adding a vehicle, I ask user to input all properties that the vehicle
+has. Then I ask user to specify what type of vehicle it is by choosing an 
+ingeter. For example, if a user chooses a motor, I further ask user to add 
+engine, front wheel size, back wheel size specifications. Then I create a 
+specific vehicle based on those specifications. 
+Then I insert the pointer to the vehicle into Structure. If there is a vehicle 
+with the same id exits, insertion does nothing actually.
+
+Inside adding tasks, I ask user to choose a task first. Then I put taskname,
+the cost of parts, and cost of labors together to make a task, then inserting
+the task into the specified vehicle's list of tasks. I keep asking user if
+he/she wants to add more tasks till the user chooses to stop.
+
+Inside view/print, Check out a vehicle prints all the vehicle's information
+as well as its bills. The printbill function is called in the List.cpp to
+print out all the tasks and associated costs, as well as number of total 
+cost finally. By doing this I first get the vehicle from the structure, then
+prints the information of it using the returned pointer to the vehicle object.
+If the vehicle does not exist in the repository, I tell the user about the
+problem. I delete the pointer in the end to protect memory lose.
+
+View all vehicles calls the print function of Structure class. It traverses 
+through all the nodes and print elements in the leaves inside my structure.
+I call it by calling the overloaded "<<".
+
+View a single vehicle asks the user to input an id associated with the vehicle
+wanted to view. If the vehicle is not in the list, I break the method. Else I
+call print function on the vehicle, printing all its specifications and the 
+first task on it. I set pointer returned by get method to null in the end.
+
+Creative method 1: view the bill so far on the vehicle. 
+I get the user input of which vehicle to view bill, and search it in the structure
+by its id. Then I return the bill integer variable stored in the vehicle's tasklist.
+I nullify the pointer in the end.
+
+Creative method 2: change a car's color.
+I get the user input of which vehicle he/she wants to paint. Then I change the 
+indicated vehicle's color by calling the setcolor method of the vehicle.
+I nullify the pointer in the end.
+
+In the end, if the user wants to exit the center, I delete the structure and nullify
+the pointer to it.
+
+In Task.h and Task.cpp:
+My Task class contains a string representation of task name, int taskparts
+which is the cost for parts in the task, and tasklabot integer which is the
+cost for labor in this task. The constructor takes three input to make a
+task. It has three methods: getname, getparts and get labor, which is very
+straightforward.
+
+In List.h and List.cpp:
+
+My List class has a inner listnode class which takes a task and makes it a node
+It has content which is the Task object stored in it, as well as a next pointer
+pointing to next object.
+It has gettaskfunction which returns the task in it.
+List class is its friend.
+
+List class has private variables of firstnode and bill, which is total amount
+of cost so fat( the sum of all costparts and costlabors of all the nodes in
+it)
+In its constructor, it declares firstnode to be null, and bill to be zero.
+In its destructor, it traverses through all nodes in it and delete them all
+by making first points to its next and delete first using a temporary pointer.
+Get bill simply returns the bill.
+Insert takes three parameters that are able to form a task. It then forms a 
+relative task and make task into a node using that task, then it inserts new
+task into the list by pointing new task's next to first, and make first 
+point to itself, since it's new first.
+In the same time, I update the bill by adding two new charges.
+Printfirst calls print function in the Task, printing firstNode's values if
+it exists.
+Print traverses through the list, printing out node's tasks one by one, and 
+prints total charges accumulated so far in the end.
+
+In Vehicle.h and Vehicle.cpp:
+
+Vehicle has five private members: a private pointer to its tasklist which is
+List type, its unique id and its int model year, as well as its string color
+and mileage. 
+Constructor: basically sets for values according to parameters and allocates
+space for the tasklist.
+Destructor: calls destructor of the list and set pointer to list null.
+setid, getid, setyear, getyear, setcolor, getcolor, setmileage, getmileage
+does settings and getting values of respective types. Getters are constant.
+Print method prints all the information of the vehicle as well as the first
+task on the list, which indicates current task, since latest task are inserted
+as the first
+add method takes three parameters and passes these three parameters to List
+class, and it adds a new tasknode to its private tasklist by calling the 
+add function on the list.
+getcost returns the bill on the tasklist which updates itself everytime new
+task is inserted. It does this by calling getbill function on list since bill
+is private to List.
+printbill calls tasklist's print function which prints all the task information
+and total charge.
+
+In Car.h and Car.cpp:
+
+Does all the things Vehicle does, but:
+Has new private values of engine power integer, gas string and pollution level
+integer.
+Has relative getters, don't have setters since it is not likely to make changes
+to them.
+overloads print method to print cars characterstics as well.
+overloads << operator to print the object, actually calls print method.
+
+In Hybrid.h and Hybrid.cpp:
+
+Does all the things Car does, but:
+Has new private values of motor power integer, usage and battery capacity
+integer.
+Has relative getters, don't have setters since it is not likely to make changes
+to them.
+overloads print method to print hybrid characterstics as well.
+o
+
+In Motor.h and Motor.cpp:
+
+Does all the things Vehicle does, but:
+Has new private values of engine power and front wheel size as well as back
+wheel size.
+Has relative getters, don't have setters since it is not likely to make changes
+to them.
+overloads print method to print cars characterstics as well.
+overloads << operator to print the object, actually calls print method.
+
+
+In Bus.h and Bus.cpp:
+
+Does all the things Vehicle does, but:
+Has new private value of int passenger capacity
+Has relative getter, don't have setter since it is not likely to make changes
+to them.
+overloads print method to print cars characterstics as well.
+overloads << operator to print the object, actually calls print method.
+
+
